@@ -9,6 +9,7 @@ import { userList } from "@/pages/Acl/User/redux";
 import { roleList } from "@/pages/Acl/Role/redux";
 import { menuList } from "@/pages/Acl/Permission/redux";
 
+// 整合reduce
 export default combineReducers({
 	language,
   loading,

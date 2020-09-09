@@ -128,6 +128,8 @@ axiosInstance.interceptors.response.use(
         message: "网络异常",
       });
     }
+    // 失败的时候返回一个pending状态的Promise，中断Promise链
+    return new Promise(()=>{})
   }
 );
 
