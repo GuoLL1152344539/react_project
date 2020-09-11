@@ -5,7 +5,7 @@ import { Card, Button, Table, Tooltip, Input } from 'antd'
 import { PlusCircleOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
 // 引入reqAllSubject发送请求
 import { reqNo1SubjectPagination, reqAllNo2SubjectByNo1Id, reqUpdateSubject } from '@/api/edu/subject'
-
+// 引入css
 import './index.less'
 
 
@@ -37,24 +37,6 @@ export default class Subject extends Component {
       loading: false
     })
   }
-  // handleExpand = async(expanded,record)=>{
-  //   if (expanded) {
-  //     const {items} = await reqAllNo2SubjectByNo1Id(record._id)
-  //     // console.log(items);
-  //     const {no1SubjectInfo, expandedRowKeys} = this.state
-  //     const formatedNo1Items = no1SubjectInfo.items.map((no1Subject)=>{
-  //       if (no1Subject._id === record._id) {
-  //         no1Subject.children = items
-  //       }
-  //       return no1Subject
-  //     })
-  //     // 维护状态
-  //     this.setState({
-  //       no1SubjectInfo:{...no1SubjectInfo, items:formatedNo1Items},
-  //       expandedRowKeys:[record._id,...expandedRowKeys]
-  //     })
-  //   }
-  // }
   handleExpand = async (expandedIds) => {
     const { expandedRowKeys, no1SubjectInfo } = this.state
     // 如果是展开
@@ -98,18 +80,10 @@ export default class Subject extends Component {
     // 调用递归函数，传入数组，实现修改title
     let updateData = this.updateNo1SubjectInfo(this.state.no1SubjectInfo.items)
     const { editSubjectId, editSubjectTitle, no1SubjectInfo } = this.state
+    // 调用接口，发送请求，修改数据
     const result = await reqUpdateSubject(editSubjectId, editSubjectTitle)
-    // 修改分类名后，自动更新当前显示
-    // items = items.map(subject => (
-    //   subject._id === editSubjectId ?
-    //     ({ ...subject, title: editSubjectTitle }) :
-    //     subject
-    // ))
     // 更新状态
     this.setState({ editSubjectId: '', editSubjectTitle: '', no1SubjectInfo: { ...no1SubjectInfo, items: [...updateData] } })
-  }
-  getDataTypestr = (data) => {
-    return Object.prototype.toString.call(data).slice(8, -1);
   }
   // 递归更新状态数据
   updateNo1SubjectInfo = (data) => {
@@ -133,22 +107,6 @@ export default class Subject extends Component {
       // 如果以上不满足，则返回当前对象
       return { ...item }
     })
-    // const { editSubjectId, editSubjectTitle } = this.state
-    // for (let i in data){
-    //   let type = this.getDataTypestr(data[i])
-    //   if (type === 'Array') {
-    //     let items = data[i].map((subject)=>(
-    //       subject._id === editSubjectId ?
-    //         ({ ...subject, title: editSubjectTitle }) :
-    //         subject
-    //     ))
-    //     data[i].forEach((item)=>{
-    //       this.updateNo1SubjectInfo(item)
-    //     })
-    //     return items
-    //     // this.setState({data: { ...data, i:items } })
-    //   }
-    // }
   }
 
   componentDidMount() {
@@ -218,7 +176,6 @@ export default class Subject extends Component {
             expandable={{
               // onExpand: this.handleExpand,//展开的回调---传入：是否展开、当前展开项
               expandedRowKeys,//告诉table展开哪些项
-              // onExpandedRowsChange:(expandedIds)=>{this.setState({expandedRowKeys:expandedIds})}
               onExpandedRowsChange: this.handleExpand
               // expandedRowRender: record => {//展开某项的回调
               //   // 获取当前一级分类的id，发请求获取对应的二级分类数据
@@ -234,10 +191,7 @@ export default class Subject extends Component {
               showSizeChanger: true,//切换页大小
               showQuickJumper: true,//跳到第几页
               pageSizeOptions: ['3', '5', '8', '10'],
-              // onChange:(page)=>{this.getNo1SubjectPagination(page)},
-              // 简化写法
               onChange: this.getNo1SubjectPagination,//页码改变的回调
-              // onShowSizeChange: (_, pageSize) => { this.getNo1SubjectPagination(1, pageSize) },//切换页大小的回调
               onShowSizeChange: (_, pageSize) => { this.getNo1SubjectPagination(1, pageSize) },//切换页大小的回调
             }}
           />
