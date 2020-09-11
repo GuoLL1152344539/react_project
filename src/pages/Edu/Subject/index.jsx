@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 // 引入antd的Card组件/Button组件
-import { Card, Button, Table, Tooltip } from 'antd'
+import { Card, Button, Table, Tooltip, Input } from 'antd'
 // 引入icon图标
 import { PlusCircleOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
 // 引入reqAllSubject发送请求
-import { reqNo1SubjectPagination, reqAllNo2SubjectByNo1Id } from '@/api/edu/subject'
+import { reqNo1SubjectPagination, reqAllNo2SubjectByNo1Id, reqUpdateSubject } from '@/api/edu/subject'
 
 import './index.less'
 
@@ -18,12 +18,15 @@ export default class Subject extends Component {
     },
     pageSize: 3,//页大小
     expandedRowKeys: [],//展开了的一级分类
-    loading:false,//
+    loading: false,
+    editSubjectId: '',//当前编辑的id
+    editSubjectTitle: '',//当前编辑的名字
+
   }
   // 根据页码和页大小请求数据
   getNo1SubjectPagination = async (page, pageSize = this.state.pageSize) => {
     // 展示loading
-    this.setState({loading:true})
+    this.setState({ loading: true })
     let { items, total } = await reqNo1SubjectPagination(page, pageSize)
     // 加工请求回来的一级分类数组，给每一项都加children属性，目的是可以展开
     items = items.map((no1Subject) => ({ ...no1Subject, children: [] }))
@@ -31,7 +34,7 @@ export default class Subject extends Component {
       no1SubjectInfo: { items, total },
       pageSize,
       expandedRowKeys: [],
-      loading:false
+      loading: false
     })
   }
   // handleExpand = async(expanded,record)=>{
@@ -59,7 +62,7 @@ export default class Subject extends Component {
       // 获取当前展开项的id
       const currentId = expandedIds.slice(-1)[0]
       // 获取当前展开项
-      const currentSubject = no1SubjectInfo.items.find(sub=>sub._id === currentId)
+      const currentSubject = no1SubjectInfo.items.find(sub => sub._id === currentId)
       if (currentSubject.children && !currentSubject.children.length) {
         // 请求数据
         const { items } = await reqAllNo2SubjectByNo1Id(currentId)
@@ -81,6 +84,63 @@ export default class Subject extends Component {
     // 维护好
     this.setState({ expandedRowKeys: expandedIds })
   }
+  // 点击编辑按钮的回调
+  handleEdit = ({ _id, title }) => {
+    return () => {
+      this.setState({ editSubjectId: _id, editSubjectTitle: title })
+    }
+  }
+  // 点击编辑按钮的回调
+  handleTitleChange = (event) => {
+    this.setState({ editSubjectTitle: event.target.value })
+  }
+  updateSubject = async () => {
+    let updateData = this.updateNo1SubjectInfo(this.state.no1SubjectInfo.items)
+    const { editSubjectId, editSubjectTitle, no1SubjectInfo } = this.state
+    const result = await reqUpdateSubject(editSubjectId, editSubjectTitle)
+    // 修改分类名后，自动更新当前显示
+    // items = items.map(subject => (
+    //   subject._id === editSubjectId ?
+    //     ({ ...subject, title: editSubjectTitle }) :
+    //     subject
+    // ))
+    this.setState({ editSubjectId: '', editSubjectTitle: '', no1SubjectInfo: { ...no1SubjectInfo, items: [...updateData] } })
+  }
+  getDataTypestr = (data) => {
+    return Object.prototype.toString.call(data).slice(8, -1);
+  }
+  // 递归更新状态数据
+  updateNo1SubjectInfo = (data) => {
+    let { editSubjectId, editSubjectTitle } = this.state
+    return data.map((item) => {
+      if (item._id === editSubjectId) {
+        return {
+          ...item,
+          title: editSubjectTitle
+        }
+      }
+      if (item.children) {
+        item.children = this.updateNo1SubjectInfo(item.children)
+      }
+      return { ...item }
+    })
+    // const { editSubjectId, editSubjectTitle } = this.state
+    // for (let i in data){
+    //   let type = this.getDataTypestr(data[i])
+    //   if (type === 'Array') {
+    //     let items = data[i].map((subject)=>(
+    //       subject._id === editSubjectId ?
+    //         ({ ...subject, title: editSubjectTitle }) :
+    //         subject
+    //     ))
+    //     data[i].forEach((item)=>{
+    //       this.updateNo1SubjectInfo(item)
+    //     })
+    //     return items
+    //     // this.setState({data: { ...data, i:items } })
+    //   }
+    // }
+  }
 
   componentDidMount() {
     // 初始化第一页数据
@@ -88,31 +148,40 @@ export default class Subject extends Component {
   }
   render() {
     // dataSource是表格的数据源，后期一定是通过服务器获取
-    const { no1SubjectInfo: { items, total }, pageSize, expandedRowKeys, loading } = this.state
+    const { no1SubjectInfo: { items, total }, pageSize, expandedRowKeys, loading, editSubjectId } = this.state
     // columns是表格的列配置
     const columns = [
       {
         title: '分类名',//列名
-        dataIndex: 'title',//列索引，数据索引项
+        // dataIndex: 'title',//列索引，数据索引项
         key: '_id',
         width: '80%',
-        // render: (item) => '￥'+item.name
+        render: ({ _id, title }) => (
+          _id === editSubjectId ?
+            <Input onChange={this.handleTitleChange} className="edit_input" type="text" defaultValue={title} /> :
+            title
+        )
       },
       {
         title: '操作',
-        dataIndex: 'operation',
-        key: 'operation',
+        // dataIndex: '_id',
+        key: '_id',
         align: 'center',
-        // render做高级设置
-        render: () => (
-          <>
-            <Tooltip title="编辑分类">
-              <Button type="primary" icon={<FormOutlined />}></Button>
-            </Tooltip>
-            <Tooltip title="删除分类">
-              <Button type="danger" icon={<DeleteOutlined />} className="left_btn"></Button>
-            </Tooltip>
-          </>
+        // render做高级设置:dataIndex指定值时，render的参数是指定的值，不指定dataIndex时，接收整个操作项
+        render: (subject) => (
+          subject._id === editSubjectId ?
+            <div className="edit_btn_group">
+              <Button size="small" type="primary" className="ok_btn" onClick={this.updateSubject}>确定</Button>
+              <Button size="small">取消</Button>
+            </div> :
+            <>
+              <Tooltip placement="top" title="编辑分类">
+                <Button onClick={this.handleEdit(subject)} type="primary" icon={<FormOutlined />}></Button>
+              </Tooltip>
+              <Tooltip title="删除分类">
+                <Button type="danger" icon={<DeleteOutlined />} className="left_btn"></Button>
+              </Tooltip>
+            </>
         )
         /*
           1.render与dataIndex同时存在的时候，以render为主
@@ -130,7 +199,7 @@ export default class Subject extends Component {
               新增分类
             </Button>
           }
-          // loading={loading}
+        // loading={loading}
         >
           <Table
             dataSource={items}
@@ -159,6 +228,7 @@ export default class Subject extends Component {
               // onChange:(page)=>{this.getNo1SubjectPagination(page)},
               // 简化写法
               onChange: this.getNo1SubjectPagination,//页码改变的回调
+              // onShowSizeChange: (_, pageSize) => { this.getNo1SubjectPagination(1, pageSize) },//切换页大小的回调
               onShowSizeChange: (_, pageSize) => { this.getNo1SubjectPagination(1, pageSize) },//切换页大小的回调
             }}
           />

@@ -34,3 +34,20 @@ export function reqAllNo2SubjectByNo1Id(no1SubjectId) {// 获取二级分类
     method:'GET',
   })
 }
+
+/**
+ * @author lei
+ * @param {id} id 
+ * @param {名字} title 
+ * 
+ */
+export function reqUpdateSubject(id,title) {// 获取二级分类
+    return request({
+      url:`${BASE_URL}/update`,
+      method:'PUT',
+      data:{
+        id,
+        title
+      }
+    })
+  }
