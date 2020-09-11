@@ -16,12 +16,15 @@ export default class Subject extends Component {
       items: [], //当前页的一级分类数据
       total: 0, //数据总数
     },
-    pageSize: 5//页大小
+    pageSize: 3,//页大小
   }
   // 根据页码和页大小请求数据
   getNo1SubjectPagination = async (page, pageSize = this.state.pageSize) => {
     const { total, items } = await reqNo1SubjectPagination(page, pageSize)
-    this.setState({ no1SubjectInfo: { total, items } })
+    this.setState({
+      no1SubjectInfo: { total, items },
+      pageSize
+    })
   }
   componentDidMount() {
     // 初始化第一页数据
@@ -95,13 +98,13 @@ export default class Subject extends Component {
             pagination={{
               pageSize,
               total,
-              showSizeChanger:true,
-              pageSizeOptions:[1,3,5,10],
-              // showQuickJumper,
-              // showTotal= (total => {total} items`),
+              showSizeChanger:true,//切换页大小
+              showQuickJumper:true,//跳到第几页
+              pageSizeOptions:['3','5','8','10'],
               // onChange:(page)=>{this.getNo1SubjectPagination(page)}
               // 简化写法
-              onChange:this.getNo1SubjectPagination,
+              onChange:this.getNo1SubjectPagination,//页码改变的回调
+              onShowSizeChange:(_,pageSize)=>{this.getNo1SubjectPagination(1,pageSize)},//切换页大小的回调
             }}
           />
         </Card>
