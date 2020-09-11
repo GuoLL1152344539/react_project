@@ -17,9 +17,20 @@ export function reqAllNo1Subject() {
  * @param {第几页} page
  * @param {页大小} pagesize
  */
-export function reqNo1SubjectPagination(page,pagesize) {
+
+export function reqNo1SubjectPagination(page,pagesize) {// 获取一级分类数据
   return request({
     url:`${BASE_URL}/${page}/${pagesize}`,
+    method:'GET',
+  })
+}
+/**
+ * @author lei
+ * @param {一级分类的id} no1SubjectId 
+ */
+export function reqAllNo2SubjectByNo1Id(no1SubjectId) {// 获取二级分类
+  return request({
+    url:`${BASE_URL}/get/${no1SubjectId}`,
     method:'GET',
   })
 }
