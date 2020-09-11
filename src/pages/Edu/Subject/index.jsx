@@ -95,6 +95,7 @@ export default class Subject extends Component {
     this.setState({ editSubjectTitle: event.target.value })
   }
   updateSubject = async () => {
+    // 调用递归函数，传入数组，实现修改title
     let updateData = this.updateNo1SubjectInfo(this.state.no1SubjectInfo.items)
     const { editSubjectId, editSubjectTitle, no1SubjectInfo } = this.state
     const result = await reqUpdateSubject(editSubjectId, editSubjectTitle)
@@ -104,6 +105,7 @@ export default class Subject extends Component {
     //     ({ ...subject, title: editSubjectTitle }) :
     //     subject
     // ))
+    // 更新状态
     this.setState({ editSubjectId: '', editSubjectTitle: '', no1SubjectInfo: { ...no1SubjectInfo, items: [...updateData] } })
   }
   getDataTypestr = (data) => {
@@ -111,17 +113,24 @@ export default class Subject extends Component {
   }
   // 递归更新状态数据
   updateNo1SubjectInfo = (data) => {
+    // 取出更新后的状态数据
     let { editSubjectId, editSubjectTitle } = this.state
+    // 将传进来的data-数组用map方法遍历加工并返回加工后的数组
     return data.map((item) => {
+      // 判断当前操作项的id是否与当前item的id相等
       if (item._id === editSubjectId) {
+        // 若相等，修改title并返回当前对象
         return {
           ...item,
           title: editSubjectTitle
         }
       }
+      // 不相等有可能是二级分类，先判断是否有二级分类
       if (item.children) {
+        // 有二级分类则将当前二级分类的数组传给递归函数，继续判断修改title
         item.children = this.updateNo1SubjectInfo(item.children)
       }
+      // 如果以上不满足，则返回当前对象
       return { ...item }
     })
     // const { editSubjectId, editSubjectTitle } = this.state
