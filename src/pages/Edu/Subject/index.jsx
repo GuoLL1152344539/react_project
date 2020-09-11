@@ -17,17 +17,21 @@ export default class Subject extends Component {
       total: 0, //数据总数
     },
     pageSize: 3,//页大小
-    expandedRowKeys: [],//
+    expandedRowKeys: [],//展开了的一级分类
+    loading:false,//
   }
   // 根据页码和页大小请求数据
   getNo1SubjectPagination = async (page, pageSize = this.state.pageSize) => {
+    // 展示loading
+    this.setState({loading:true})
     let { items, total } = await reqNo1SubjectPagination(page, pageSize)
     // 加工请求回来的一级分类数组，给每一项都加children属性，目的是可以展开
     items = items.map((no1Subject) => ({ ...no1Subject, children: [] }))
     this.setState({
       no1SubjectInfo: { items, total },
       pageSize,
-      expandedRowKeys: []
+      expandedRowKeys: [],
+      loading:false
     })
   }
   // handleExpand = async(expanded,record)=>{
@@ -50,18 +54,20 @@ export default class Subject extends Component {
   // }
   handleExpand = async (expandedIds) => {
     const { expandedRowKeys, no1SubjectInfo } = this.state
+    // 如果是展开
     if (expandedIds.length > expandedRowKeys.length) {
       // 获取当前展开项的id
       const currentId = expandedIds.slice(-1)[0]
       // 获取当前展开项
-      const currentSubject = no1SubjectInfo.items.find((sub)=>sub._id === currentId)
-      if (!currentSubject.children.length) {
+      const currentSubject = no1SubjectInfo.items.find(sub=>sub._id === currentId)
+      if (currentSubject.children && !currentSubject.children.length) {
         // 请求数据
         const { items } = await reqAllNo2SubjectByNo1Id(currentId)
         // console.log(items);
-        const formatedNo1Items = no1SubjectInfo.items.map((no1Subject) => {
+        const formatedNo1Items = no1SubjectInfo.items.map(no1Subject => {
           if (no1Subject._id === currentId) {
             no1Subject.children = items
+            // 如果当前项的children没有数据，就删掉
             !items.length && delete no1Subject.children
           }
           return no1Subject
@@ -72,6 +78,7 @@ export default class Subject extends Component {
         })
       }
     }
+    // 维护好
     this.setState({ expandedRowKeys: expandedIds })
   }
 
@@ -81,7 +88,7 @@ export default class Subject extends Component {
   }
   render() {
     // dataSource是表格的数据源，后期一定是通过服务器获取
-    const { no1SubjectInfo: { items, total }, pageSize, expandedRowKeys } = this.state
+    const { no1SubjectInfo: { items, total }, pageSize, expandedRowKeys, loading } = this.state
     // columns是表格的列配置
     const columns = [
       {
@@ -123,11 +130,13 @@ export default class Subject extends Component {
               新增分类
             </Button>
           }
+          // loading={loading}
         >
           <Table
             dataSource={items}
             columns={columns}
             rowKey="_id"
+            loading={loading}
             expandable={{
               // onExpand: this.handleExpand,//展开的回调---传入：是否展开、当前展开项
               expandedRowKeys,//告诉table展开哪些项
