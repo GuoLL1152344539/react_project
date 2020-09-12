@@ -58,8 +58,24 @@ export function reqUpdateSubject(id,title) {// 获取二级分类
  * 
  */
 export function reqDeleteSubject(id) {// 获取二级分类
-    return request({
-      url:`${BASE_URL}/remove/${id}`,
-      method:'DELETE',
-    })
-  }
+  return request({
+    url:`${BASE_URL}/remove/${id}`,
+    method:'DELETE',
+  })
+}
+
+/**
+ * @author lei
+ * @param {要删除分类的id} id 
+ * 
+ */
+export function reqAddSubject({title,parentId}) {// 获取二级分类
+  return request({
+    url:`${BASE_URL}/save`,
+    method:'POST',
+    data:{
+      title,
+      parentId
+    }
+  })
+}
