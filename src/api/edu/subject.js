@@ -42,12 +42,24 @@ export function reqAllNo2SubjectByNo1Id(no1SubjectId) {// 获取二级分类
  * 
  */
 export function reqUpdateSubject(id,title) {// 获取二级分类
+  return request({
+    url:`${BASE_URL}/update`,
+    method:'PUT',
+    data:{
+      id,
+      title
+    }
+  })
+}
+
+/**
+ * @author lei
+ * @param {要删除分类的id} id 
+ * 
+ */
+export function reqDeleteSubject(id) {// 获取二级分类
     return request({
-      url:`${BASE_URL}/update`,
-      method:'PUT',
-      data:{
-        id,
-        title
-      }
+      url:`${BASE_URL}/remove/${id}`,
+      method:'DELETE',
     })
   }
