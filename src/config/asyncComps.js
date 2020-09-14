@@ -15,6 +15,7 @@ const Center = () => lazy(() => import("@/pages/User/Center"));
 const Subject = () => lazy(() => import("@/pages/Edu/Subject"));
 const AddSubject = () => lazy(() => import("@/pages/Edu/Subject/components/AddSubject"));
 const Chapter = () => lazy(() => import("@/pages/Edu/Chapter"));
+const AddLesson = () => lazy(() => import("@/pages/Edu/Chapter/components/AddLesson"));
 
 
 export default {
@@ -32,4 +33,5 @@ export default {
   Subject,
   AddSubject,
   Chapter,
+  AddLesson,
 };

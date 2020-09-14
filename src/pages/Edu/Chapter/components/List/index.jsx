@@ -3,9 +3,11 @@ import { Card, Button, Table } from "antd";
 import { PlusOutlined, FullscreenOutlined, PlusCircleOutlined, FormOutlined, DeleteOutlined } from "@ant-design/icons";
 import Pubsub from 'pubsub-js'
 import { reqAllLessonListByCourseId } from "@/api/edu/lesson";
+import { withRouter } from "react-router-dom";
 import './index.less'
 
-export default class List extends Component {
+@withRouter
+class List extends Component {
 
   state={
     chapterList:[]
@@ -58,7 +60,7 @@ export default class List extends Component {
           <>
             {
               'free' in data ? null:
-              <Button className="mar_right_btn" type="primary" icon={<PlusCircleOutlined/>} />
+              <Button  onClick={()=>{this.props.history.push('/edu/chapter/addlesson')}} className="mar_right_btn" type="primary" icon={<PlusCircleOutlined/>} />
             }
             <Button className="mar_right_btn" type="primary" icon={<FormOutlined/>} />
             <Button type="danger" icon={<DeleteOutlined/>} />
@@ -89,3 +91,5 @@ export default class List extends Component {
     )
   }
 }
+
+export default List
