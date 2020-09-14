@@ -6,6 +6,7 @@ export default class Chapter extends Component {
     return (
       <>
         <Search/>
+        <br/>
         <List/>
       </>
     )

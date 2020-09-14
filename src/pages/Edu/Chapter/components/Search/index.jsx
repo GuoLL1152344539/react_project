@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Card, Form, Select, Button } from "antd";
 import { reqAllCourse } from "@/api/edu/course";
 import { reqChapterListByCourseId } from "@/api/edu/chapter";
+import Pubsub from 'pubsub-js'
 import './index.less'
 
 const { Item } = Form
@@ -23,12 +24,13 @@ export default class Search extends Component {
   handleFinish = async (values)=>{
     const {courseId} = values
     const result = await reqChapterListByCourseId(1,5,courseId)
-    console.log(result);
+    Pubsub.publish('chapter_list',result)
   }
 
   // 重置按钮的回调
   resetForm = () => {
     this.refs.form.resetFields();
+    Pubsub.publish('chapter_list',[])
   }
 
   // 组件挂载完成的钩子
