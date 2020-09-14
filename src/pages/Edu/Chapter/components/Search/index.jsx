@@ -12,18 +12,26 @@ export default class Search extends Component {
     courseList:[],
   }
 
+  // 获取所有章节
   getAllCourse = async () => {
     const courseList = await reqAllCourse()
     this.setState({courseList})
     // console.log(courseList);
   }
 
+  // 搜索按钮的回调
   handleFinish = async (values)=>{
     const {courseId} = values
     const result = await reqChapterListByCourseId(1,5,courseId)
     console.log(result);
   }
 
+  // 重置按钮的回调
+  resetForm = () => {
+    this.refs.form.resetFields();
+  }
+
+  // 组件挂载完成的钩子
   componentDidMount() {
     this.getAllCourse()
   }
@@ -33,6 +41,7 @@ export default class Search extends Component {
     return (
       <Card>
         <Form 
+          ref="form"
           layout="inline" 
           initialValues={{ courseId: '' }}
           onFinish={this.handleFinish}
@@ -58,7 +67,7 @@ export default class Search extends Component {
             <Button type="primary" htmlType="submit">搜索</Button>
           </Item>
           <Item>
-            <Button>重置</Button>
+            <Button onClick={this.resetForm}>重置</Button>
           </Item>
         </Form>
       </Card>
