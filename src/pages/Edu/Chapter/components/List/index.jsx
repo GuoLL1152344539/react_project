@@ -60,7 +60,12 @@ class List extends Component {
           <>
             {
               'free' in data ? null:
-              <Button  onClick={()=>{this.props.history.push('/edu/chapter/addlesson')}} className="mar_right_btn" type="primary" icon={<PlusCircleOutlined/>} />
+              <Button 
+                onClick={()=>{this.props.history.push('/edu/chapter/addlesson', {id:data._id})}} 
+                className="mar_right_btn" 
+                type="primary" 
+                icon={<PlusCircleOutlined/>} 
+              />
             }
             <Button className="mar_right_btn" type="primary" icon={<FormOutlined/>} />
             <Button type="danger" icon={<DeleteOutlined/>} />
