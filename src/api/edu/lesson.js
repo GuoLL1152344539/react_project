@@ -8,3 +8,10 @@ export function reqAllLessonListByCourseId(courseId) {
     method: "GET",
   });
 }
+export function reqAllLesson({chapterId, free, title, video}) {
+  return request({
+    url: `${BASE_URL}/save`,
+    method: "POST",
+    data:{chapterId, free, title, video}
+  });
+}
