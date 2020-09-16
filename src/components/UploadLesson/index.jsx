@@ -48,7 +48,7 @@ export default class UploadLesson extends Component {
     const putExtra = {}
     const config = {}//region: qiniu.region.z1
     const observable = qiniu.upload(file, key, uploadToken, putExtra, config)
-    const subscription = observable.subscribe(observer) // 上传开始
+    observable.subscribe(observer) // 上传开始
   }
 
   render() {
