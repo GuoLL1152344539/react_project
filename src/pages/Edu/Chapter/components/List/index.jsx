@@ -38,7 +38,9 @@ class List extends Component {
 
   showModal = (data) => {
     return () => {
+      // console.log('data.video---',data.video);
       this.setState({ visible: true, lessonTitle: data.title, url: data.video })
+      // console.log('url----',this.state.url);
     }
   }
 
@@ -54,7 +56,8 @@ class List extends Component {
   switchFullScreen = () => {
     // console.log('你要全屏');
     // screenfull.request()
-    screenfull.toggle(this.refs.lesson_list)
+    // screenfull.toggle(this.refs.lesson_list)
+    screenfull.toggle()
   }
 
   componentDidMount() {
@@ -77,6 +80,7 @@ class List extends Component {
   }
 
   render() {
+    
     const { chapterList, url, visible, lessonTitle, isFull } = this.state
     // 表格的列配置
     const columns = [
@@ -144,10 +148,10 @@ class List extends Component {
         </div>
         {/* 预览课时弹窗 */}
         <Modal
-          title={lessonTitle}//弹窗的标题
-          visible={visible}//弹窗是否展示
-          // onOk={this.handleOk}//确定按钮的回调
-          onCancel={this.handleCancel}//取消按钮的回调
+          title={lessonTitle} // 弹窗的标题
+          visible={visible} // 弹窗是否展示
+          // onOk={this.handleOk} // 确定按钮的回调
+          onCancel={this.handleCancel} // 取消按钮的回调
           footer={null}
           destroyOnClose
         >
