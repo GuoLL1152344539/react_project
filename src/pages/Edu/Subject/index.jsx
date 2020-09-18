@@ -151,8 +151,8 @@ export default class Subject extends Component {
       title: <div>确定删除当前分类:  <span className="delete_title">{title}</span> 吗？</div>,
       icon: <ExclamationCircleOutlined />,
       content: '删除后无法恢复，谨慎操作',
-      okText: '确定',
-      cancelText: '取消',
+      // okText: '确定',
+      // cancelText: '取消',
       onOk: async () => {
         // console.log(_id);
         // 发送请求去删除

@@ -109,8 +109,8 @@ export default class Admin extends Component {
 		console.log(key);
 	}
 
-	getDate = (a, b) => {
-		console.log('aaaaaaa', a, 'bbbbbb', b);
+	getDate = (a, date) => {
+		console.log('aaaaaaa', a, 'bbbbbb', date);
 	}
 
 	render() {

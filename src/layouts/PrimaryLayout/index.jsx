@@ -6,16 +6,17 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import SiderMenu from "../SiderMenu";
 import { AuthorizedRouter } from "@/components/Authorized";
 import { logout } from "@/redux/actions/login";
-import { changeLanguage } from "@/redux/actions/language";
 import { resetUser } from "../../components/Authorized/redux";
 import logo from "@/assets/images/logo.png";
 import { findPathIndex } from "@/utils/tools";
+import { changeLanguage } from "@/redux/actions/language";
 import "@/assets/css/common.less";// 引入组件公共样式
 import "./index.less";
 
@@ -23,7 +24,7 @@ const { Header, Sider, Content } = Layout;
 
 @connect(
   (state) => ({
-    user: state.user,
+    user: state.user,//标识左侧导航展开或收缩
   }),
   {
     logout,
@@ -37,14 +38,16 @@ class PrimaryLayout extends Component {
     collapsed: false,
   };
 
+  // 折叠或者展开左侧导航的回调
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
     });
   };
 
+  // 退出登录的回调
   logout = ({ key }) => {
-		console.log('logout');
+		// console.log('logout');
     if (key !== "2") return;
     this.props.logout().then(() => {
       localStorage.removeItem("user_token");
@@ -54,10 +57,11 @@ class PrimaryLayout extends Component {
 	};
 	
 	changeLanguage = ({key})=>{
-		console.log('切换到:',key,'语言包');
+		// console.log('切换到:',key,'语言包');
 		this.props.changeLanguage(key)
 	}
 
+  // 用户头像鼠标悬浮的下拉菜单
   menu = (
     <Menu style={{ width: 150 }} onClick={this.logout}>
       <Menu.Item key="0">
@@ -78,8 +82,23 @@ class PrimaryLayout extends Component {
         退出登录
       </Menu.Item>
     </Menu>
-	);
-	
+  );
+  
+  languageMenu = (
+    <Menu style={{ width: 110 }} onClick={this.changeLanguage} >
+      <Menu.Item key="zh_CN">
+        中文简体
+      </Menu.Item>
+      <Menu.Item key="zh_TW">
+        中文繁體
+      </Menu.Item>
+      <Menu.Item key="en">
+        English
+      </Menu.Item>
+    </Menu>
+  )
+  
+  // 维护菜单和路由对应关系
   selectRoute = (routes = [], pathname) => {
     for (let i = 0; i < routes.length; i++) {
       const route = routes[i];
@@ -113,6 +132,7 @@ class PrimaryLayout extends Component {
     }
   };
 
+  // 渲染面包屑导航
   renderBreadcrumb = (route) => {
     if (this.props.location.pathname === "/") {
       return (
@@ -173,6 +193,11 @@ class PrimaryLayout extends Component {
                   <span className="site-layout-user">
                     <img src={user.avatar} alt="avatar" />
                     <span>{user.name}</span>
+                  </span>
+                </Dropdown>
+                <Dropdown overlay={this.languageMenu}>
+                  <span className="site-layout-user" className="lang">
+                    <GlobalOutlined />
                   </span>
                 </Dropdown>
               </span>

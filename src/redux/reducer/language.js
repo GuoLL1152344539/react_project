@@ -1,11 +1,12 @@
 import { CHANGE_LANGUAGE } from "../constants/language";
 
-const initLanguage = 'zh_CN';
+const initLang = 'zh_CN';
 
-export default function changeLanguage(prevState = initLanguage, action) {
-  switch (action.type) {
+export default function changeLanguage(prevState = initLang, action) {
+  const {type,data} = action
+  switch (type) {
     case CHANGE_LANGUAGE:
-      return action.data;
+      return data;
     default:
       return prevState;
   }
