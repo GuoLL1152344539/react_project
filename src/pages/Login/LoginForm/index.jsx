@@ -12,9 +12,10 @@ import {
 } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { login,loginSuccessSync } from "@/redux/actions/login";
+import { login, loginSuccessSync } from "@/redux/actions/login";
 import { reqVerifyCode } from "@/api/phone";
 import { reqPhoneLogin } from "@/api/acl/login";
+import { AUTH_URL, CLIENT_ID } from "@/config/oauth";
 import "./index.less";
 
 const { TabPane } = Tabs;
@@ -61,7 +62,7 @@ class LoginForm extends Component {
 
   reqVerifyCode = async () => {
     await this.refs.loginForm.validateFields(['phone'])
-    const {phone} = this.refs.loginForm.getFieldsValue(['phone'])
+    const { phone } = this.refs.loginForm.getFieldsValue(['phone'])
     this.setState({ canClick: false })
     this.timer = setInterval(() => {
       let { time } = this.state
@@ -75,6 +76,10 @@ class LoginForm extends Component {
     }, 1000);
     await reqVerifyCode(phone)
     message.success('验证码发送成功,请注意查收')
+  }
+
+  gotoGithubAuth = () => {
+    window.location.href = `${AUTH_URL}?client_id=${CLIENT_ID}`
   }
 
   render() {
@@ -154,7 +159,7 @@ class LoginForm extends Component {
               <Col>
                 <span>
                   第三方账号登录：
-                  <GithubOutlined className="login-icon" />
+                  <GithubOutlined onClick={this.gotoGithubAuth} className="login-icon" />
                   <WechatOutlined className="login-icon" />
                   <QqOutlined className="login-icon" />
                 </span>
